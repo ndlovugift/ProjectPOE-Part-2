@@ -1,0 +1,26 @@
+name: Java CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Compile source and quickchat tests
+        run: |
+          mkdir -p build/classes
+          javac -d build/classes -cp "lib/*" $(find src/quickchat test/quickchat -name "*.java")
+
+      - name: Run unit tests
+        run: java -cp "build/classes:lib/*" org.junit.runner.JUnitCore quickchat.MessageTest
